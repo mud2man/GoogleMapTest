@@ -1,11 +1,10 @@
 var GOOGLEMAP_KEY = 'AIzaSyDcNzI1i6Gg6vXmuP5p4Zk198pgNHvef9I';
-var positiveLocations =[{lat: 40.807, lng: -73.963}, {lat: 39.807, lng: -73.963}];
-var negativeLocations =[{lat: 34.022, lng: -118.285}, {lat: 35.022, lng: -118.285}];
+var globalPositiveLocations = [];
+var globalNegativeLocations = [];
 var usaCenetr = {lat: 40, lng: -98};
 
-function createMap(positiveLocations, negativeLocations) {
+function createMap(localPositiveLocations, localNegativeLocations) {
   console.log("Hello createMap");
-
   map = new google.maps.Map(document.getElementById('map'), {
     center: usaCenetr,
     zoom: 5
@@ -13,9 +12,9 @@ function createMap(positiveLocations, negativeLocations) {
 
   var markers = [];
   /* put positive marker */
-  for(var i = 0; i < positiveLocations.length; ++i){
+  for(var i = 0; i < localPositiveLocations.length; ++i){
     var marker = new google.maps.Marker({
-      position: positiveLocations[i],
+      position: localPositiveLocations[i],
       icon: 'greenMarker.png',
       map: map
     });
@@ -23,9 +22,9 @@ function createMap(positiveLocations, negativeLocations) {
   }
 
   /* put negative marker */
-  for(var i = 0; i < negativeLocations.length; ++i){
+  for(var i = 0; i < localNegativeLocations.length; ++i){
     var marker = new google.maps.Marker({
-      position: negativeLocations[i],
+      position: localNegativeLocations[i],
       icon: 'redMarker.png',
       map: map
     });
@@ -33,7 +32,9 @@ function createMap(positiveLocations, negativeLocations) {
   }
 }
 
-function invokeGoogleAPI() { 
+function drawTrenMap(localPositiveLocations, localNegativeLocations) { 
+  globalPositiveLocations = localPositiveLocations;
+  globalNegativeLocations = localNegativeLocations;
   var url = "https://maps.googleapis.com/maps/api/js?key=";
   url += GOOGLEMAP_KEY;
   url += "&sensor=false&async=2&callback=loadGoogleMap";
@@ -41,13 +42,10 @@ function invokeGoogleAPI() {
 }
 
 function loadGoogleMap() {
-   createMap(positiveLocations, negativeLocations);
+   createMap(globalPositiveLocations, globalNegativeLocations);
 }
 
 $(document).ready(function() {
   console.log("Hello ready....");
-  document.getElementById('Address').addEventListener('submit', function (e) {
-    e.preventDefault(); //prevent a submit button from submitting a form.
-    invokeGoogleAPI();
-}, false);
+  drawTrenMap([{lat: 40.807, lng: -73.963}, {lat: 39.807, lng: -73.963}], [{lat: 34.022, lng: -118.285}, {lat: 35.022, lng: -118.285}]);
 });
